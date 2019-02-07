@@ -6,6 +6,7 @@
 package RacunalniServis.controller;
 
 import RacunalniServis.model.Klijent;
+import RacunalniServis.model.Narudzba;
 import RacunalniServis.model.Usluge;
 import java.sql.*;
 import java.util.ArrayList;
@@ -172,7 +173,37 @@ import java.util.logging.Logger;
         }
     }
     
-    
-    
+    public Usluge usluga(Integer sifra){
+        Usluge usluge = new Usluge();
+         try {
+            Connection conn = spajanje();
+            PreparedStatement stmt = conn.prepareStatement( "SELECT Usluga.SifraUsluge, Usluga.NazivUsluge, Usluga.CijenaUsluge FROM Usluga WHERE SifraUsluge= ?;");
+            stmt.setInt(1, sifra);
+            ResultSet set = stmt.executeQuery();
+            usluge.setSifraUsluge(sifra);
+            usluge.setNazivUsluge(set.getString("NazivUsluge"));
+            usluge.setCijenaUsluge(set.getDouble("CijenaUsluge"));
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(SQLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return usluge;
+    }
+     public void unosNarudzbe(Narudzba n){
+        try {
+            
+            Connection conn = spajanje();
+            String sql = "INSERT INTO Narudzbe (SifraKlijenta, OdabraneUsluge) VALUES(?,?);";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, n.getKlijent());
+            stmt.setString(2, n.getUsluge());
+           
+            stmt.execute();
+            
+            conn.close();
+        }catch (Exception ex){
+            System.out.println("Greška kod spremanja narudzbe... "+ex.toString());
+        }
+    }
     
 }

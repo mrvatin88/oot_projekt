@@ -8,6 +8,7 @@ package RacunalniServis.view;
 import RacunalniServis.controller.SQLController;
 import RacunalniServis.model.Klijent;
 import RacunalniServis.model.Narudzba;
+import RacunalniServis.model.Usluge;
 import static java.awt.image.ImageObserver.WIDTH;
 import java.util.ArrayList;
 
@@ -18,23 +19,30 @@ import java.util.ArrayList;
 public class UnosNarudzbe extends javax.swing.JFrame {
 
     ArrayList<Klijent> klijenti  = new ArrayList();
+    ArrayList<Usluge> usluge  = new ArrayList();
     SQLController db = new SQLController();
     /**
      * Creates new form Usluge
      */
+    public Narudzba order = new Narudzba();
+    
     public UnosNarudzbe() {
         initComponents();
         this.klijenti = db.listaKlijenta();
-        if(this.klijenti == null)
+        this.usluge = db.listaUsluga();
+        if(this.klijenti == null || this.usluge == null)
             return;
         
         for(int i=0;i<this.klijenti.size();i++){
             Klijent klijent = this.klijenti.get(i);
-           
+          
             clientList.addItem(klijent);
         }
-        
-      
+        for(int i=0;i<this.usluge.size();i++){
+            Usluge u = this.usluge.get(i);
+           
+            uslugeList.addItem(u);
+        }
     }
 
     
@@ -48,14 +56,13 @@ public class UnosNarudzbe extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        uslugeList = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtNarudzba = new javax.swing.JTextArea();
         btnPotvrda = new javax.swing.JButton();
         btnIzmjena = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         clientList = new javax.swing.JComboBox<>();
-        btnUnos = new javax.swing.JButton();
         btnOdustani = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -63,10 +70,9 @@ public class UnosNarudzbe extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setText("Unos i izmjena narudžbe");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        uslugeList.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                uslugeListActionPerformed(evt);
             }
         });
 
@@ -75,6 +81,11 @@ public class UnosNarudzbe extends javax.swing.JFrame {
         jScrollPane1.setViewportView(txtNarudzba);
 
         btnPotvrda.setText("Potvrda narudžbe");
+        btnPotvrda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPotvrdaActionPerformed(evt);
+            }
+        });
 
         btnIzmjena.setText("Izmjena narudžbe");
 
@@ -83,13 +94,6 @@ public class UnosNarudzbe extends javax.swing.JFrame {
         clientList.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clientListActionPerformed(evt);
-            }
-        });
-
-        btnUnos.setText("Potvrda unosa");
-        btnUnos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUnosActionPerformed(evt);
             }
         });
 
@@ -114,9 +118,7 @@ public class UnosNarudzbe extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnPotvrda))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btnUnos, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
+                                .addComponent(uslugeList, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(23, 23, 23)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(btnOdustani)
@@ -143,11 +145,8 @@ public class UnosNarudzbe extends javax.swing.JFrame {
                 .addGap(77, 77, 77)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnUnos)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(uslugeList, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(6, 6, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnIzmjena)
                     .addComponent(btnPotvrda))
@@ -163,6 +162,7 @@ public class UnosNarudzbe extends javax.swing.JFrame {
     private void clientListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientListActionPerformed
         Klijent selected = (Klijent)this.clientList.getSelectedItem();
         System.out.println(selected.getSifraKlijenta());
+        this.order.setKlijent(selected.getSifraKlijenta());
     }//GEN-LAST:event_clientListActionPerformed
 
     private void btnOdustaniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOdustaniActionPerformed
@@ -173,15 +173,33 @@ public class UnosNarudzbe extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_btnOdustaniActionPerformed
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void ispisiNarudzbu(){
+        String text;
+         StringBuilder builder = new StringBuilder();
+        for(Usluge u:this.order.usluge){
+            builder.append(u.getNazivUsluge() +" "+u.getCijenaUsluge()+ "\n");
+        }
+        txtNarudzba.setText(builder.toString());
+    }
+    private void uslugeListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uslugeListActionPerformed
         // TODO add your handling code here:
+     
+        Usluge u = (Usluge)this.uslugeList.getSelectedItem();
+        this.order.dodajUslugu(u);
+        
+        ispisiNarudzbu();
        
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+       
+    }//GEN-LAST:event_uslugeListActionPerformed
 
-    private void btnUnosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUnosActionPerformed
+    private void btnPotvrdaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPotvrdaActionPerformed
         // TODO add your handling code here:
-       
-    }//GEN-LAST:event_btnUnosActionPerformed
+        if(this.order.getKlijent() == -1 || this.order.usluge.size() == 0)
+            return;
+        
+        db.unosNarudzbe(order);
+        
+    }//GEN-LAST:event_btnPotvrdaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -225,13 +243,12 @@ public class UnosNarudzbe extends javax.swing.JFrame {
     private javax.swing.JButton btnIzmjena;
     private javax.swing.JButton btnOdustani;
     private javax.swing.JButton btnPotvrda;
-    private javax.swing.JButton btnUnos;
     private javax.swing.JComboBox<Klijent> clientList;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtNarudzba;
+    private javax.swing.JComboBox<Usluge> uslugeList;
     // End of variables declaration//GEN-END:variables
 
    

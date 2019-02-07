@@ -32,5 +32,9 @@ public class Usluge {
         this.cijenaUsluge = cijenaUsluge;
     }
     
+     @Override()
+    public String toString(){
+        return nazivUsluge;
+    }
     
 }
