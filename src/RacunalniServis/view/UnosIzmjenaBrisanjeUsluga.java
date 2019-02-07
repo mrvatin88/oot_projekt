@@ -5,19 +5,68 @@
  */
 package RacunalniServis.view;
 
+import RacunalniServis.controller.SQLController;
+import RacunalniServis.model.Usluge;
+import java.awt.event.MouseListener;
+import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
+import java.util.ArrayList;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+
 /**
  *
  * @author Matej
  */
 public class UnosIzmjenaBrisanjeUsluga extends javax.swing.JFrame {
 
+    private SQLController sql = new SQLController();
+    private DefaultTableModel tableModel;
+    private Integer selectedSifra = -1;
+    private ArrayList<Usluge> usluge;
     /**
      * Creates new form UnosIzmjenaBrisanjeUsluga
      */
     public UnosIzmjenaBrisanjeUsluga() {
         initComponents();
-    }
 
+        this.setTableData();
+
+    }
+    
+     private void setTableData(){
+     
+         //this.uslugeTable.set
+         JTable table = this.uslugeTable;
+       
+         tableModel = (DefaultTableModel) table.getModel();
+            
+           this.updateTable();
+           
+            table.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent e){
+                    int row=table.rowAtPoint(e.getPoint());
+                    Usluge selected = usluge.get(row);
+                    //System.out.println(selected.getNazivUsluge());
+
+                    txtNaziv.setText(selected.getNazivUsluge());
+                    txtCijena.setText(selected.getCijenaUsluge().toString());
+                    //txtSifra.setText(selected.getSifraUsluge().toString());
+                    selectedSifra = selected.getSifraUsluge();
+                }
+            });
+     }
+
+     private void updateTable(){
+          usluge = sql.listaUsluga();
+           // System.out.println(usluge.get(0).getNazivUsluge());
+           for(Usluge usluga:usluge){
+               tableModel.addRow(new Object[]{usluga.getSifraUsluge(), usluga.getNazivUsluge(), usluga.getCijenaUsluge()});
+           }
+     }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,9 +77,15 @@ public class UnosIzmjenaBrisanjeUsluga extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        Unesi = new javax.swing.JButton();
+        btnIzmjeni = new javax.swing.JButton();
+        btnObrisi = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        uslugeTable = new javax.swing.JTable();
+        txtNaziv = new javax.swing.JTextField();
+        txtCijena = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -38,45 +93,154 @@ public class UnosIzmjenaBrisanjeUsluga extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("<html><div>Unos, izmjena ili</div><div><center>brisanje usluga</center></div></html>");
 
-        jButton1.setText("Unos usluge");
+        Unesi.setText("Unesi");
+        Unesi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UnesiActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Izmjena usluge");
+        btnIzmjeni.setText("Izmijeni");
+        btnIzmjeni.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIzmjeniActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Brisanje usluge");
+        btnObrisi.setText("Obrisi");
+        btnObrisi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnObrisiActionPerformed(evt);
+            }
+        });
+
+        uslugeTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+            },
+            new String [] {
+                "Šifra usluge", "Naziv", "Cijena"
+            }
+        ));
+        uslugeTable.setCellSelectionEnabled(true);
+        jScrollPane1.setViewportView(uslugeTable);
+
+        txtCijena.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCijenaActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("Naziv");
+
+        jLabel3.setText("Cijena");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(82, 82, 82)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(125, 125, 125)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(82, Short.MAX_VALUE))
+                        .addGap(43, 43, 43)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnObrisi, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(txtNaziv, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCijena, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(44, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnIzmjeni)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Unesi, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(47, 47, 47)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnObrisi)
+                            .addComponent(btnIzmjeni)
+                            .addComponent(Unesi)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNaziv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtCijena, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(108, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void txtCijenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCijenaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCijenaActionPerformed
+
+    private void UnesiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UnesiActionPerformed
+        // TODO add your handling code here:
+        String naziv = txtNaziv.getText();
+        String _cijena = txtCijena.getText();
+        
+        if(naziv.isEmpty() || _cijena.isEmpty() ) return;
+                
+        Double cijena = parseDouble(_cijena);
+
+        this.sql.unosUsluge(naziv, cijena);
+       
+        this.resetTable();
+    }//GEN-LAST:event_UnesiActionPerformed
+
+    private void resetTable(){
+        tableModel.getDataVector().removeAllElements();
+        tableModel.fireTableDataChanged();
+        this.updateTable();
+
+    }
+    private void btnIzmjeniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIzmjeniActionPerformed
+        // TODO add your handling code here:
+        if(txtNaziv.getText().isEmpty() || txtCijena.getText().isEmpty())
+            return;
+        
+        Usluge usluga = new Usluge();
+        usluga.setSifraUsluge(selectedSifra);
+        usluga.setNazivUsluge(txtNaziv.getText());
+        usluga.setCijenaUsluge(parseDouble(txtCijena.getText()));
+        
+        sql.izmjenaUsluge(usluga);
+        this.resetTable();
+    }//GEN-LAST:event_btnIzmjeniActionPerformed
+
+    private void btnObrisiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnObrisiActionPerformed
+        // TODO add your handling code here:
+        // String _sifra = txtSifra.getText();
+        
+        if(selectedSifra == -1)
+            return;
+        
+        sql.brisanjeUsluge(selectedSifra);
+        this.resetTable();
+    }//GEN-LAST:event_btnObrisiActionPerformed
 
     /**
      * @param args the command line arguments
@@ -112,11 +276,19 @@ public class UnosIzmjenaBrisanjeUsluga extends javax.swing.JFrame {
             }
         });
     }
+    
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton Unesi;
+    private javax.swing.JButton btnIzmjeni;
+    private javax.swing.JButton btnObrisi;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField txtCijena;
+    private javax.swing.JTextField txtNaziv;
+    private javax.swing.JTable uslugeTable;
     // End of variables declaration//GEN-END:variables
 }
